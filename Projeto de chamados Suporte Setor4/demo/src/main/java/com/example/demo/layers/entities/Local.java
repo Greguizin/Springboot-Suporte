@@ -1,6 +1,8 @@
 package com.example.demo.layers.entities;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,6 +27,7 @@ public class Local {
 
     //relação 1:N com Chamados
 
+    @JsonIgnore
     @OneToMany(mappedBy = "local", cascade = CascadeType.ALL)
     private List<Chamado> chamado;
 

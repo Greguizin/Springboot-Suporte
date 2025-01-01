@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,7 +30,8 @@ public class Chamado {
     @Column(nullable = false)
     @CreationTimestamp  
     private LocalDateTime datacriacao;
-
+    
+    @JsonIgnore
     @OneToMany(mappedBy = "chamado", cascade = CascadeType.ALL)
     private List<Situacao> situacao;
 

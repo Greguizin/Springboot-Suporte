@@ -8,7 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Cliente {
@@ -25,6 +25,7 @@ public class Cliente {
     @Column(nullable = false)
     private String telefone;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "cliente",cascade = CascadeType.ALL)
     private List<Chamado> chamado;
 
