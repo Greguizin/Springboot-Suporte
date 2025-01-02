@@ -36,3 +36,9 @@ Tipos Computadores:							Situações:
 
 
 
+
+
+para get de descricoes:
+http://localhost:8080/situacoes/id/descricoes
+
+

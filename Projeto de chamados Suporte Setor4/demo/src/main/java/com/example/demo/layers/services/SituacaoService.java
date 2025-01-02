@@ -9,9 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.example.demo.layers.entities.Chamado;
+import com.example.demo.layers.entities.Descricoes;
 import com.example.demo.layers.entities.Situacao;
-import com.example.demo.layers.repository.ChamadoRepository;
+import com.example.demo.layers.repository.DescricoesRepository;
 import com.example.demo.layers.repository.SituacaoRepository;
 
 @Service
@@ -19,8 +19,9 @@ public class SituacaoService {
 
     @Autowired
     private SituacaoRepository situacaoRepository;
+
     @Autowired
-    private ChamadoRepository chamadoRepository;
+    private DescricoesRepository descricoesRepository;
 
     // Método para salvar uma nova situação
     public Situacao salvar(Situacao situacao) {
@@ -37,28 +38,29 @@ public class SituacaoService {
         return situacaoRepository.findById(id);
     }
 
-    // Método para atualizar uma situação
-     public Situacao atualizarSituacao(Long id, Situacao situacaoAtualizada) {
-        // Buscar a situação pelo id
+     public Situacao atualizarSituacao(Long id, Situacao situacaoAtualizada, String novaDescricao) {
+        // Buscar a situação existente pelo ID
         Situacao situacaoExistente = situacaoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Situação não encontrada"));
 
-        // Atualizar o status da situação
+        // Atualizar os campos da situação
         situacaoExistente.setSituacao(situacaoAtualizada.getSituacao());
-
-        // Atualizar a data de modificação
         situacaoExistente.setDatamodf(LocalDateTime.now());
 
-        // Atualizar o chamado associado (se necessário)
-        Chamado chamado = situacaoExistente.getChamado();
-        if (chamado != null) {
-            // Se necessário, você pode fazer algo com o chamado, como salvar ou atualizar o chamado também
-            chamadoRepository.save(chamado);
-        }
+        // Salvar a situação atualizada no banco
+        situacaoExistente = situacaoRepository.save(situacaoExistente);
 
-        // Salvar a situação atualizada
-        return situacaoRepository.save(situacaoExistente);
+        // Criar uma nova descrição e associar à situação
+        Descricoes novaDescricaoEntity = new Descricoes();
+        novaDescricaoEntity.setDescricao(novaDescricao);
+        novaDescricaoEntity.setSituacao(situacaoExistente);
+
+        // Salvar a nova descrição no banco de dados
+        descricoesRepository.save(novaDescricaoEntity);
+
+        return situacaoExistente;
     }
+
 
     // Método para deletar uma situação
     public void deletar(Long id) {
@@ -70,6 +72,17 @@ public class SituacaoService {
 
     public List<Situacao> buscarSituacoesEmAberto() {
         return situacaoRepository.findSituacoesEmAberto(Situacao.SituacaoEnum.ABERTO);
+    }
+
+
+    public List<Descricoes> buscarDescricoesPorSituacao(Long situacaoId) {
+        // Buscar a situação pela ID
+        Optional<Situacao> situacao = situacaoRepository.findById(situacaoId);
+        if (situacao.isPresent()) {
+            return descricoesRepository.findBySituacao(situacao.get());
+        } else {
+            throw new RuntimeException("Situação não encontrada");
+        }
     }
 
 }

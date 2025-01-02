@@ -2,6 +2,7 @@ package com.example.demo.layers.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.layers.DTOS.AtualizarSituacaoRequest;
+import com.example.demo.layers.entities.Descricoes;
 import com.example.demo.layers.entities.Situacao;
 import com.example.demo.layers.services.SituacaoService;
 
@@ -48,8 +51,11 @@ public class SituacaoController {
 
     // Endpoint para atualizar uma situação
     @PutMapping("/{id}")
-    public ResponseEntity<Situacao> atualizarSituacao(@PathVariable Long id, @RequestBody Situacao situacaoAtualizada) {
-        Situacao situacao = situacaoService.atualizarSituacao(id, situacaoAtualizada);
+    public ResponseEntity<Situacao> atualizarSituacao(@PathVariable Long id, @RequestBody AtualizarSituacaoRequest request) {
+        Situacao situacaoAtualizada = new Situacao();
+        situacaoAtualizada.setSituacao(request.getSituacao());
+
+        Situacao situacao = situacaoService.atualizarSituacao(id, situacaoAtualizada, request.getNovaDescricao());
         return ResponseEntity.ok(situacao);
     }
 
@@ -65,6 +71,17 @@ public class SituacaoController {
     @GetMapping("/abertas")
     public List<Situacao> buscarSituacoesEmAberto() {
          return situacaoService.buscarSituacoesEmAberto();
+    }
+
+      // Endpoint para buscar todas as descrições de uma situação por ID
+    @GetMapping("/{id}/descricoes")
+    public ResponseEntity<List<String>> buscarDescricoesPorSituacao(@PathVariable Long id) {
+        // Buscar as descrições e retornar somente os valores de descricao
+        List<String> descricoes = situacaoService.buscarDescricoesPorSituacao(id)
+                                                 .stream()
+                                                 .map(Descricoes::getDescricao)  // Extrair apenas a descrição
+                                                 .collect(Collectors.toList());
+        return ResponseEntity.ok(descricoes);
     }
 
 
