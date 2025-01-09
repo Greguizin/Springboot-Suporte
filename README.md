@@ -61,6 +61,7 @@ para atualizar a situacao via put e modificar a descricao:
 
 lembre de criar um usuario no banco de dados antes.
 Criar um usuario: ROLE_ADMIN, ROLE_GESTOR, ROLE_USER.
+
 {
   "login": "Cleberson Luiz",
   "senha": "Gustavo$23",
@@ -68,10 +69,12 @@ Criar um usuario: ROLE_ADMIN, ROLE_GESTOR, ROLE_USER.
 }
 
 Tem o cadastrar Também não necessario colocar o papel:
+
 {  
   "login": "Cleberson Luiz",
   "senha": "Gustavo$23"
 }
+
 Se quiser atualizar o usuario precisa já tem um  admin e usar o put nesse formato:
 
 {  
